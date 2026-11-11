@@ -1,8 +1,8 @@
 name: rubal-oracle
 version: 0.1.0
 description: >
-  Forecast whether you will meet commitments you choose, from similar past attempts
-  and git/calendar proof — then inject odds into Hermes and suggest subtract when receptive.
+  Stick to commitments you choose — set a deadline, link git or Calendar proof,
+  then see if you met it (not your word alone).
 author: X0EF
 requires_hermes: ">=0.22.7"
 homepage: https://github.com/X0EF/rubal-oracle

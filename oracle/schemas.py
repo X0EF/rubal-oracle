@@ -18,7 +18,8 @@ def _schema(
 
 ORACLE_COMMIT = _schema(
     "oracle_commit",
-    "Save a commitment with a proof-based settler (git or calendar). Refuses if unsettled.",
+    "Track a user goal with a deadline when proof is git (commit/PR/paths/test) or Calendar (event exists). "
+    "Call when the user asks to be held accountable or agrees to a track offer. Refuses unsettled goals.",
     {
         "statement": _str("What you plan to do."),
         "deadline": _str("ISO8601 deadline."),
@@ -52,7 +53,7 @@ ORACLE_COMMIT = _schema(
 
 ORACLE_SETTLE = _schema(
     "oracle_settle",
-    "Run settler after deadline: success, fail, or unresolved.",
+    "After the deadline, check git/calendar proof for a commitment id. Returns met, not met, or couldn't verify.",
     {"id": _str("Commitment id from oracle_commit.")},
     required=["id"],
 )
@@ -70,7 +71,7 @@ ORACLE_REVISE = _schema(
 
 ORACLE_STATUS = _schema(
     "oracle_status",
-    "Open commitments and forecasts.",
+    "List open and settled commitments with forecasts and user-facing outcome labels.",
     {"id": _str("Optional single commitment id.")},
 )
 
@@ -92,7 +93,7 @@ ORACLE_EXTEND = _schema(
 
 ORACLE_RESPOND_TRACK = _schema(
     "oracle_respond_track",
-    "Accept or decline a pre_llm_call track offer (nothing saved until accept + settler).",
+    "User answered a track offer in inject. accept true + commit fields saves; accept false declines.",
     {
         "offer_id": _str("Offer id from inject context."),
         "accept": {"type": "boolean"},

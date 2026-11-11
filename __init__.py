@@ -124,7 +124,9 @@ def _on_pre_llm_call(**kwargs: Any) -> dict[str, Any] | None:
         "session_id": kwargs.get("session_id", ""),
         "platform": kwargs.get("platform", "cli"),
     }
-    return engine.pre_llm_call(payload, store=_store(), now=now_iso())
+    result = engine.pre_llm_call(payload, store=_store(), now=now_iso())
+    _persist()
+    return result
 
 
 def _result_text(result: Any) -> str:
@@ -186,8 +188,16 @@ def register(ctx) -> None:
     ctx.register_command(
         "oracle",
         _slash_oracle,
-        description="Oracle commitments: status, extend, settle (see docs/SPEC.md)",
+        description="Oracle commitments — status, help, extend, settle",
     )
+
+    skills_dir = _ROOT / "skills"
+    if skills_dir.is_dir():
+        for child in sorted(skills_dir.iterdir()):
+            skill_md = child / "SKILL.md"
+            if child.is_dir() and skill_md.is_file():
+                ctx.register_skill(child.name, skill_md)
+
     ctx.register_hook("pre_llm_call", _on_pre_llm_call)
     ctx.register_hook("post_tool_call", _on_post_tool_call)
     log.info("rubal-oracle: registered %d tools", len(tools))

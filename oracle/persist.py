@@ -19,6 +19,7 @@ class PersistedStore(MemoryStore):
             "stats": dict(self.stats),
             "leave_me_alone_until": self.leave_me_alone_until,
             "last_track_dismiss_at": self.last_track_dismiss_at,
+            "onboarding_sessions": list(self.onboarding_sessions),
             "last_id": self.last_id,
             "seq": self._seq,
         }
@@ -34,6 +35,7 @@ class PersistedStore(MemoryStore):
         store.stats = dict(blob.get("stats") or store.stats)
         store.leave_me_alone_until = blob.get("leave_me_alone_until")
         store.last_track_dismiss_at = blob.get("last_track_dismiss_at")
+        store.onboarding_sessions = list(blob.get("onboarding_sessions") or [])
         store.last_id = blob.get("last_id")
         store._seq = int(blob.get("seq") or len(store.commitments))
         return store

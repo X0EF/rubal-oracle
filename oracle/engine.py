@@ -10,6 +10,7 @@ from typing import Any
 from oracle.backfill import backfill_from_git, merge_backfill_comparables
 from oracle.git_settle import git_done_rule_satisfied
 from oracle.receptive import is_receptive
+from oracle.user_copy import FIRST_TURN_ONBOARDING, TRACK_OFFER_USER, USER_HELP
 
 _TRACK_OFFER_RE = re.compile(
     r"\b(i will|i'll|this week|by (monday|tuesday|wednesday|thursday|friday|saturday|sunday)|ship .+ (by|before))\b",
@@ -30,6 +31,7 @@ class MemoryStore:
         }
         self.leave_me_alone_until: str | None = None
         self.last_track_dismiss_at: str | None = None
+        self.onboarding_sessions: list[str] = []
         self.last_id: str | None = None
         self._seq = 0
 
@@ -431,9 +433,28 @@ def oracle_status(store: MemoryStore, *, now: str, commitment_id: str | None = N
     return {"ok": True, "summary": text, "open": open_rows, "settled": settled_rows}
 
 
+def user_help() -> str:
+    return USER_HELP
+
+
+def _first_turn_onboarding(payload: dict[str, Any], store: MemoryStore) -> str | None:
+    if not payload.get("is_first_turn"):
+        return None
+    if store.commitments:
+        return None
+    sid = str(payload.get("session_id") or "")
+    if sid and sid in store.onboarding_sessions:
+        return None
+    if sid:
+        store.onboarding_sessions.append(sid)
+    return FIRST_TURN_ONBOARDING
+
+
 def slash(raw_args: str, *, store: MemoryStore, sources: dict[str, Any], now: str) -> str:
     parts = raw_args.strip().split()
     cmd = parts[0].lower() if parts else "status"
+    if cmd in ("help", "?"):
+        return user_help()
     if cmd == "status":
         return status_text(store, now=now)
     if cmd == "extend" and len(parts) >= 3:
@@ -460,9 +481,9 @@ def _track_offer_context(message: str, store: MemoryStore) -> str | None:
     store.stats["track_offers_made"] = int(store.stats.get("track_offers_made", 0)) + 1
     offer_id = f"off-{uuid.uuid4().hex[:8]}"
     return (
-        f"[Oracle track offer {offer_id}] Nothing saved yet. "
-        f'Track this plan? Use oracle_respond_track with offer_id="{offer_id}", '
-        "accept true + full oracle_commit fields, or accept false to decline."
+        f"[Oracle track offer {offer_id}] {TRACK_OFFER_USER} "
+        "If they agree, gather what/how/deadline then oracle_commit. "
+        f'If they decline: oracle_respond_track offer_id="{offer_id}" accept false.'
     )
 
 
@@ -524,6 +545,9 @@ def pre_llm_call(
     receptive: bool | None = True,
 ) -> dict[str, Any] | None:
     chunks: list[str] = []
+    hint = _first_turn_onboarding(payload, store)
+    if hint:
+        chunks.append(hint)
     user_message = payload.get("user_message") or ""
     offer = _track_offer_context(user_message, store)
     if offer:

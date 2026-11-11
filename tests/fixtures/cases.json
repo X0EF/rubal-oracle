@@ -474,7 +474,29 @@
       },
       "expect": {
         "has_context": true,
-        "context_contains": ["Track this plan", "oracle_respond_track"]
+        "context_contains": ["track offer", "Want Oracle"]
+      }
+    },
+    {
+      "id": "inject-first-turn-onboarding",
+      "surface": "pre_llm_call",
+      "input": {
+        "user_message": "hi",
+        "is_first_turn": true,
+        "session_id": "onboard-1",
+        "platform": "cli"
+      },
+      "expect": {
+        "has_context": true,
+        "context_contains": ["stick to", "deadline"]
+      }
+    },
+    {
+      "id": "slash-help",
+      "surface": "slash",
+      "raw_args": "help",
+      "expect": {
+        "text_contains": ["/oracle status", "deadline", "met"]
       }
     },
     {
