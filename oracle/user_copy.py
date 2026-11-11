@@ -4,11 +4,9 @@ USER_HELP = """rubal-oracle is a Hermes plugin. Name a goal, a deadline, and how
 
 Git (no extra plugin): a repo path plus one done rule — matching commit, merged PR, files touched, or a named test.
 
-Google Calendar: connect Hermes Calendar / Google Workspace Calendar (not email-only). We look for a matching event in your window. That only proves the event exists.
+Google Calendar: connect Hermes Calendar / Google Workspace Calendar (not email-only). Matching event in your window, or an empty slot if that is the goal.
 
 When that source is connected: GitHub (issue closed), Notion (task done), Linear (issue done), Gmail (email sent), or kanban (card done).
-
-Gym, bank, location, and screen time are refused.
 
 After the deadline: met, not met, or couldn't verify.
 
@@ -29,8 +27,8 @@ FIRST_TURN_ONBOARDING = (
     "[Oracle — a few ordinary sentences.] "
     "rubal-oracle tracks a goal from chat (deadline + how we check). No slash required. "
     "Git = repo + done rule. Google Calendar = Hermes Calendar plugin + matching event. "
-    "Rubal = odds from similar past attempts, or we say we do not have enough history. "
-    "Gym and location are refused."
+    "Also GitHub, Notion, Linear, Gmail, or kanban when that source is connected. "
+    "Rubal = odds from similar past attempts, or we say we do not have enough history."
 )
 
 TRACK_OFFER_USER = (
