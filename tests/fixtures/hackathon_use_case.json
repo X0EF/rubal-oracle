@@ -1,0 +1,356 @@
+{
+  "meta": {
+    "title": "First personal use case: ship plugin + record X demo before hackathon deadline",
+    "deadline": "2026-11-11T23:00:00+01:00",
+    "fixture_now": "2026-11-10T05:00:00+01:00",
+    "hours_to_deadline": 42,
+    "repo_path": "/home/ostheperson/dev/oracle-rubal",
+    "repo_remote": "git@github.com:X0EF/rubal-oracle.git",
+    "what_counts_as_shipped_git": "At least one commit on the default branch whose subject contains 'plugin' (Hermes plugin.yaml, register(ctx), engine wired).",
+    "what_counts_as_demo_calendar": "A calendar event before the deadline whose title contains 'hackathon demo' (screen-record slot; X post is manual proof, not a settler in MVP).",
+    "hermes_live_checks": [
+      "git log in named repo",
+      "Google Calendar events.list via Hermes Workspace skill (calendar connected)"
+    ]
+  },
+  "source_catalog": {
+    "at_capture_first_commitments": {
+      "git": {
+        "ok": true,
+        "repo": "/home/ostheperson/dev/oracle-rubal",
+        "remote": "git@github.com:X0EF/rubal-oracle.git",
+        "branch": "main",
+        "comparable": [],
+        "commits": []
+      },
+      "calendar": {
+        "ok": true,
+        "provider": "google_workspace",
+        "events": [
+          {"summary": "day job standup", "start": "2026-11-10T09:00:00+01:00"},
+          {"summary": "day job sync", "start": "2026-11-10T14:00:00+01:00"}
+        ]
+      }
+    },
+    "at_capture_with_plugin_reference_class": {
+      "git": {
+        "ok": true,
+        "repo": "/home/ostheperson/dev/oracle-rubal",
+        "remote": "git@github.com:X0EF/rubal-oracle.git",
+        "comparable": [
+          {"id": "rubal-w36", "statement": "ship feature slice", "matched": true, "on_time": false},
+          {"id": "rubal-w37", "statement": "ship feature slice", "matched": true, "on_time": true},
+          {"id": "rubal-w38", "statement": "ship feature slice", "matched": true, "on_time": false},
+          {"id": "rubal-w39", "statement": "docs + tests only", "matched": true, "on_time": false}
+        ],
+        "commits": []
+      },
+      "calendar": {
+        "ok": true,
+        "events": [
+          {"summary": "standup", "start": "2026-11-10T10:00:00+01:00"},
+          {"summary": "sync", "start": "2026-11-11T11:00:00+01:00"},
+          {"summary": "1:1", "start": "2026-11-11T14:00:00+01:00"},
+          {"summary": "planning", "start": "2026-11-11T15:00:00+01:00"}
+        ]
+      }
+    },
+    "at_settle_ship_merged": {
+      "git": {
+        "ok": true,
+        "repo": "/home/ostheperson/dev/oracle-rubal",
+        "commits": [
+          {
+            "date": "2026-11-11T20:15:00+01:00",
+            "subject": "feat: hermes plugin package and register(ctx)",
+            "files_hint": ["plugin.yaml", "oracle/engine.py"]
+          }
+        ]
+      },
+      "calendar": {"ok": true, "events": []}
+    },
+    "at_settle_ship_not_yet": {
+      "git": {
+        "ok": true,
+        "repo": "/home/ostheperson/dev/oracle-rubal",
+        "commits": []
+      },
+      "calendar": {"ok": true, "events": []}
+    },
+    "at_settle_demo_slot_booked": {
+      "git": {"ok": true, "repo": "/home/ostheperson/dev/oracle-rubal", "commits": []},
+      "calendar": {
+        "ok": true,
+        "events": [
+          {
+            "summary": "Hackathon demo screen record",
+            "start": "2026-11-11T19:00:00+01:00",
+            "end": "2026-11-11T19:45:00+01:00"
+          }
+        ]
+      }
+    },
+    "at_settle_demo_slot_missing": {
+      "git": {"ok": false},
+      "calendar": {"ok": true, "events": []}
+    },
+    "calendar_offline": {
+      "git": {"ok": true, "repo": "/home/ostheperson/dev/oracle-rubal"},
+      "calendar": {"ok": false, "reason": "google calendar not connected"}
+    }
+  },
+  "cases": [
+    {
+      "id": "capture-hackathon-ship-plugin",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Ship Oracle Hermes plugin (catalog-ready) before hackathon deadline",
+        "deadline": "2026-11-11T23:00:00+01:00",
+        "success_criteria": "commit on main whose subject contains 'plugin'",
+        "settler": "git",
+        "repo": "/home/ostheperson/dev/oracle-rubal",
+        "match": "plugin"
+      },
+      "sources_ref": "at_capture_first_commitments",
+      "sources": {
+        "git": {
+          "ok": true,
+          "repo": "/home/ostheperson/dev/oracle-rubal",
+          "remote": "git@github.com:X0EF/rubal-oracle.git",
+          "comparable": [],
+          "commits": []
+        },
+        "calendar": {
+          "ok": true,
+          "events": [
+            {"summary": "day job standup", "start": "2026-11-10T09:00:00+01:00"},
+            {"summary": "day job sync", "start": "2026-11-10T14:00:00+01:00"}
+          ]
+        }
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "git",
+        "forecast.uncertainty": "insufficient_reference_class",
+        "forecast.probability": null
+      }
+    },
+    {
+      "id": "capture-hackathon-ship-forecast",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Ship Oracle Hermes plugin (catalog-ready) before hackathon deadline",
+        "deadline": "2026-11-11T23:00:00+01:00",
+        "success_criteria": "commit on main whose subject contains 'plugin'",
+        "settler": "git",
+        "repo": "/home/ostheperson/dev/oracle-rubal",
+        "match": "plugin"
+      },
+      "sources": {
+        "git": {
+          "ok": true,
+          "repo": "/home/ostheperson/dev/oracle-rubal",
+          "comparable": [
+            {"id": "rubal-w36", "on_time": false},
+            {"id": "rubal-w37", "on_time": true},
+            {"id": "rubal-w38", "on_time": false},
+            {"id": "rubal-w39", "on_time": false}
+          ]
+        },
+        "calendar": {
+          "ok": true,
+          "events": [
+            {"summary": "standup", "start": "2026-11-10T10:00:00+01:00"},
+            {"summary": "sync", "start": "2026-11-11T11:00:00+01:00"},
+            {"summary": "1:1", "start": "2026-11-11T14:00:00+01:00"},
+            {"summary": "planning", "start": "2026-11-11T15:00:00+01:00"}
+          ]
+        }
+      },
+      "expect": {
+        "ok": true,
+        "forecast.probability": 0.1,
+        "forecast.reasons_mention": "calendar"
+      },
+      "notes": "1/4 on_time → 0.25, crowded calendar −0.15 → 0.10"
+    },
+    {
+      "id": "capture-hackathon-demo-recording-slot",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Block time and record under-90s Hermes demo for X",
+        "deadline": "2026-11-11T23:00:00+01:00",
+        "success_criteria": "calendar event title contains 'hackathon demo' before deadline",
+        "settler": "calendar",
+        "event_match": "hackathon demo",
+        "window_start": "2026-11-10T05:00:00+01:00",
+        "window_end": "2026-11-11T23:00:00+01:00",
+        "mode": "event_exists"
+      },
+      "sources": {
+        "git": {"ok": true, "repo": "/home/ostheperson/dev/oracle-rubal", "commits": []},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "calendar",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+    {
+      "id": "refuse-hackathon-demo-calendar-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Block time and record under-90s Hermes demo for X",
+        "deadline": "2026-11-11T23:00:00+01:00",
+        "success_criteria": "calendar event title contains 'hackathon demo'",
+        "settler": "calendar",
+        "event_match": "hackathon demo",
+        "window_start": "2026-11-10T05:00:00+01:00",
+        "window_end": "2026-11-11T23:00:00+01:00",
+        "mode": "event_exists"
+      },
+      "sources": {
+        "git": {"ok": true, "repo": "/home/ostheperson/dev/oracle-rubal"},
+        "calendar": {"ok": false, "reason": "google calendar not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "how_to_make_saveable_contains": "Calendar"
+      }
+    },
+    {
+      "id": "settle-hackathon-ship-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-hackathon-ship-plugin"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-11T23:30:00+01:00",
+      "sources": {
+        "git": {
+          "ok": true,
+          "repo": "/home/ostheperson/dev/oracle-rubal",
+          "commits": [
+            {
+              "date": "2026-11-11T20:15:00+01:00",
+              "subject": "feat: hermes plugin package and register(ctx)"
+            }
+          ]
+        },
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "success",
+        "commitment.status": "success"
+      }
+    },
+    {
+      "id": "settle-hackathon-ship-not-met",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-hackathon-ship-plugin"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-11T23:30:00+01:00",
+      "sources": {
+        "git": {"ok": true, "repo": "/home/ostheperson/dev/oracle-rubal", "commits": []},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "fail",
+        "not_outcome": "unresolved"
+      }
+    },
+    {
+      "id": "settle-hackathon-ship-unreadable",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-hackathon-ship-plugin"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-11T23:30:00+01:00",
+      "sources": {
+        "git": {"ok": false, "repo": "/home/ostheperson/dev/oracle-rubal"},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "unresolved"
+      }
+    },
+    {
+      "id": "settle-hackathon-demo-slot-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-hackathon-demo-recording-slot"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-11T23:30:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {
+          "ok": true,
+          "events": [
+            {
+              "summary": "Hackathon demo screen record",
+              "start": "2026-11-11T19:00:00+01:00",
+              "end": "2026-11-11T19:45:00+01:00"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "success"
+      }
+    },
+    {
+      "id": "settle-hackathon-demo-slot-missing",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-hackathon-demo-recording-slot"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-11T23:30:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "fail"
+      }
+    },
+    {
+      "id": "inject-hackathon-dual-open",
+      "surface": "pre_llm_call",
+      "setup": ["capture-hackathon-ship-forecast", "capture-hackathon-demo-recording-slot"],
+      "input": {
+        "user_message": "what should I do next for the hackathon?",
+        "is_first_turn": false,
+        "session_id": "hackathon",
+        "platform": "cli"
+      },
+      "expect": {
+        "action_block": false,
+        "has_context": true,
+        "context_contains": ["Ship Oracle", "record under-90s", "0.1"]
+      }
+    },
+    {
+      "id": "slash-status-hackathon",
+      "surface": "slash",
+      "raw_args": "status",
+      "setup": ["capture-hackathon-ship-plugin"],
+      "expect": {
+        "text_contains": ["Ship Oracle", "open", "insufficient"]
+      }
+    }
+  ]
+}

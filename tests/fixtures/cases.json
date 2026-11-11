@@ -1,0 +1,506 @@
+{
+  "now": "2026-11-10T05:00:00+01:00",
+  "forecast_rule": {
+    "min_class_n": 3,
+    "p": "successes / n of comparable outcomes, then if calendar_crowded subtract 0.15, clamp [0.05, 0.95]",
+    "calendar_crowded": ">= 4 events in the remaining work window"
+  },
+  "cases": [
+    {
+      "id": "refuse-gym",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Go to the gym 3 times this week",
+        "deadline": "2026-11-16T23:59:00+01:00",
+        "success_criteria": "three gym visits",
+        "settler": "location"
+      },
+      "sources": {"git": {"ok": false}, "calendar": {"ok": true, "events": []}},
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "no_settler",
+        "saved": false,
+        "how_to_make_saveable_contains": "calendar"
+      }
+    },
+    {
+      "id": "refuse-spend",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Stay under 20000 naira on food this week",
+        "deadline": "2026-11-16T23:59:00+01:00",
+        "success_criteria": "food spend <= 20000",
+        "settler": "bank"
+      },
+      "sources": {"git": {"ok": false}, "calendar": {"ok": false}},
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "no_settler",
+        "saved": false
+      }
+    },
+    {
+      "id": "refuse-calendar-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Thursday design review is on my calendar",
+        "deadline": "2026-11-13T18:00:00+01:00",
+        "success_criteria": "event titled design review exists Thursday",
+        "settler": "calendar",
+        "event_match": "design review",
+        "window_start": "2026-11-13T00:00:00+01:00",
+        "window_end": "2026-11-13T23:59:00+01:00"
+      },
+      "sources": {"git": {"ok": false}, "calendar": {"ok": false, "reason": "google calendar not connected"}},
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false,
+        "how_to_make_saveable_contains": "Calendar"
+      }
+    },
+    {
+      "id": "capture-git-ship-no-class",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Ship search this week",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "commit subject contains 'search' in /tmp/demo-app",
+        "settler": "git",
+        "repo": "/tmp/demo-app",
+        "match": "search"
+      },
+      "sources": {
+        "git": {"ok": true, "repo": "/tmp/demo-app", "commits": []},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "refused": false,
+        "saved": true,
+        "commitment.status": "open",
+        "commitment.settler.kind": "git",
+        "forecast.probability": null,
+        "forecast.uncertainty": "insufficient_reference_class",
+        "forecast.comparisons": []
+      }
+    },
+    {
+      "id": "capture-git-ship-with-class",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Ship search this week",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "commit subject contains 'search'",
+        "settler": "git",
+        "repo": "/tmp/demo-app",
+        "match": "search"
+      },
+      "sources": {
+        "git": {
+          "ok": true,
+          "repo": "/tmp/demo-app",
+          "comparable": [
+            {"id": "w1", "deadline": "2026-10-17", "matched": true, "on_time": true},
+            {"id": "w2", "deadline": "2026-10-24", "matched": true, "on_time": false},
+            {"id": "w3", "deadline": "2026-10-31", "matched": true, "on_time": false},
+            {"id": "w4", "deadline": "2026-11-07", "matched": true, "on_time": false}
+          ]
+        },
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "forecast.probability": 0.25,
+        "forecast.uncertainty": "ok",
+        "forecast.comparisons_len": 4,
+        "forecast.reasons_mention": "1 of 4"
+      }
+    },
+    {
+      "id": "capture-git-crowded-calendar-lowers-p",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Ship search this week",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "commit subject contains 'search'",
+        "settler": "git",
+        "repo": "/tmp/demo-app",
+        "match": "search"
+      },
+      "sources": {
+        "git": {
+          "ok": true,
+          "repo": "/tmp/demo-app",
+          "comparable": [
+            {"id": "w1", "on_time": true},
+            {"id": "w2", "on_time": false},
+            {"id": "w3", "on_time": false},
+            {"id": "w4", "on_time": false}
+          ]
+        },
+        "calendar": {
+          "ok": true,
+          "events": [
+            {"summary": "standup", "start": "2026-11-10T10:00:00+01:00"},
+            {"summary": "review", "start": "2026-11-11T11:00:00+01:00"},
+            {"summary": "1:1", "start": "2026-11-12T14:00:00+01:00"},
+            {"summary": "planning", "start": "2026-11-13T15:00:00+01:00"}
+          ]
+        }
+      },
+      "expect": {
+        "ok": true,
+        "forecast.probability": 0.1,
+        "forecast.reasons_mention": "calendar"
+      }
+    },
+    {
+      "id": "capture-calendar-event",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Thursday design review is on my calendar",
+        "deadline": "2026-11-13T18:00:00+01:00",
+        "success_criteria": "an event whose title contains 'design review' exists on 2026-11-13",
+        "settler": "calendar",
+        "event_match": "design review",
+        "window_start": "2026-11-13T00:00:00+01:00",
+        "window_end": "2026-11-13T23:59:00+01:00",
+        "mode": "event_exists"
+      },
+      "sources": {"git": {"ok": false}, "calendar": {"ok": true, "events": []}},
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "calendar",
+        "forecast.probability": null,
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+    {
+      "id": "inject-does-not-block",
+      "surface": "pre_llm_call",
+      "setup": ["capture-git-ship-with-class"],
+      "input": {
+        "user_message": "how is the week going?",
+        "is_first_turn": false,
+        "session_id": "s1",
+        "platform": "cli"
+      },
+      "expect": {
+        "action_block": false,
+        "has_context": true,
+        "context_contains": ["Ship search", "0.25"]
+      }
+    },
+    {
+      "id": "intervene-nothing-unreceptive",
+      "surface": "pre_llm_call",
+      "setup": ["capture-git-ship-with-class"],
+      "state": {
+        "slipping": true,
+        "decision_point": true,
+        "receptive": false
+      },
+      "input": {
+        "user_message": "working",
+        "is_first_turn": false,
+        "session_id": "s1",
+        "platform": "cli"
+      },
+      "expect": {
+        "action_block": false,
+        "offer_subtract": false
+      }
+    },
+    {
+      "id": "intervene-subtract-when-receptive",
+      "surface": "pre_llm_call",
+      "setup": ["capture-git-ship-with-class"],
+      "state": {
+        "slipping": true,
+        "decision_point": true,
+        "receptive": true
+      },
+      "input": {
+        "user_message": "working",
+        "is_first_turn": false,
+        "session_id": "s1",
+        "platform": "cli"
+      },
+      "expect": {
+        "action_block": false,
+        "offer_subtract": true,
+        "context_contains": ["subtract"]
+      }
+    },
+    {
+      "id": "settle-git-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-git-ship-no-class"],
+      "input": {"id": "$last_id"},
+      "sources": {
+        "git": {
+          "ok": true,
+          "repo": "/tmp/demo-app",
+          "commits": [
+            {"date": "2026-11-12T16:00:00+01:00", "subject": "ship search listing"}
+          ]
+        },
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "success",
+        "commitment.status": "success"
+      }
+    },
+    {
+      "id": "settle-git-missing-not-met",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-git-ship-no-class"],
+      "input": {"id": "$last_id"},
+      "sources": {
+        "git": {"ok": true, "repo": "/tmp/demo-app", "commits": []},
+        "calendar": {"ok": true, "events": []}
+      },
+      "now": "2026-11-15T09:00:00+01:00",
+      "expect": {
+        "ok": true,
+        "outcome": "fail",
+        "commitment.status": "fail",
+        "not_outcome": "unresolved"
+      }
+    },
+    {
+      "id": "settle-git-repo-unreadable",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-git-ship-no-class"],
+      "input": {"id": "$last_id"},
+      "sources": {
+        "git": {"ok": false, "repo": "/tmp/demo-app"},
+        "calendar": {"ok": true, "events": []}
+      },
+      "now": "2026-11-15T09:00:00+01:00",
+      "expect": {
+        "ok": true,
+        "outcome": "unresolved",
+        "commitment.status": "unresolved"
+      }
+    },
+    {
+      "id": "settle-calendar-missing-event",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-calendar-event"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-14T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {
+          "ok": true,
+          "events": []
+        }
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "fail",
+        "commitment.status": "fail"
+      },
+      "notes": "event_exists commitment; settler ran; no event after window → not met (fail in API)"
+    },
+    {
+      "id": "settle-calendar-event-exists",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-calendar-event"],
+      "input": {"id": "$last_id"},
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {
+          "ok": true,
+          "events": [
+            {
+              "summary": "Design review",
+              "start": "2026-11-13T15:00:00+01:00",
+              "end": "2026-11-13T16:00:00+01:00"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "success",
+        "commitment.status": "success"
+      }
+    },
+    {
+      "id": "revise-preserves-original",
+      "surface": "tool",
+      "tool": "oracle_revise",
+      "setup": ["capture-git-ship-no-class"],
+      "input": {
+        "id": "$last_id",
+        "new_criteria": "commit subject contains 'search listing'",
+        "match": "search listing"
+      },
+      "expect": {
+        "ok": true,
+        "original.status": "superseded",
+        "original.success_criteria_unchanged": true,
+        "revision.status": "open",
+        "revision.original_id": "$last_id"
+      }
+    },
+    {
+      "id": "mirror-no-calibration-claim",
+      "surface": "tool",
+      "tool": "oracle_mirror",
+      "setup": ["capture-git-ship-with-class", "settle-git-success-from-class"],
+      "input": {},
+      "expect": {
+        "ok": true,
+        "n_resolved_numeric": 1,
+        "brier": 0.5625,
+        "claims_calibration": false
+      },
+      "notes": "f=0.25, o=1 → (0.25-1)^2 = 0.5625. n=1 is not calibration."
+    },
+    {
+      "id": "slash-status",
+      "surface": "slash",
+      "raw_args": "status",
+      "setup": ["capture-git-ship-no-class"],
+      "expect": {
+        "text_contains": ["Ship search", "open", "insufficient"]
+      }
+    },
+    {
+      "id": "capture-git-pr-rule",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Merge search PR",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "merged PR title contains search",
+        "settler": "git",
+        "repo": "/tmp/demo-app",
+        "match": "search",
+        "done_rule": "pr_merge"
+      },
+      "sources": {
+        "git": {"ok": true, "repo": "/tmp/demo-app", "commits": []},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {"ok": true, "saved": true}
+    },
+    {
+      "id": "settle-git-pr-merge",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-git-pr-rule"],
+      "input": {"id": "$last_id"},
+      "sources": {
+        "git": {
+          "ok": true,
+          "repo": "/tmp/demo-app",
+          "merged_prs": [
+            {"title": "feat: search listing", "merged_at": "2026-11-12T10:00:00+01:00"}
+          ]
+        },
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {"ok": true, "outcome": "success"}
+    },
+    {
+      "id": "capture-git-paths-rule",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Ship search",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "touch src/search",
+        "settler": "git",
+        "repo": "/tmp/demo-app",
+        "match": "search",
+        "done_rule": "paths",
+        "paths": ["src/search"]
+      },
+      "sources": {
+        "git": {"ok": true, "repo": "/tmp/demo-app", "commits": []},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {"ok": true, "saved": true}
+    },
+    {
+      "id": "settle-git-paths",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-git-paths-rule"],
+      "input": {"id": "$last_id"},
+      "sources": {
+        "git": {
+          "ok": true,
+          "path_touches": [
+            {"date": "2026-11-12T10:00:00+01:00", "paths": ["src/search/index.py"]}
+          ]
+        },
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {"ok": true, "outcome": "success"}
+    },
+    {
+      "id": "inject-track-offer",
+      "surface": "pre_llm_call",
+      "input": {
+        "user_message": "I will ship the search feature this week before Friday night.",
+        "is_first_turn": false,
+        "session_id": "s2",
+        "platform": "cli"
+      },
+      "expect": {
+        "has_context": true,
+        "context_contains": ["Track this plan", "oracle_respond_track"]
+      }
+    },
+    {
+      "id": "respond-track-decline",
+      "surface": "tool",
+      "tool": "oracle_respond_track",
+      "input": {"offer_id": "off-test", "accept": false},
+      "sources": {"git": {"ok": false}, "calendar": {"ok": false}},
+      "expect": {"ok": true, "declined": true, "saved": false}
+    },
+    {
+      "id": "backfill-propose",
+      "surface": "tool",
+      "tool": "oracle_backfill",
+      "input": {"match": "search", "repo": "/tmp/demo-app"},
+      "sources": {
+        "git": {
+          "ok": true,
+          "commits": [
+            {"date": "2026-10-01T12:00:00+01:00", "subject": "search: listing"},
+            {"date": "2026-10-08T12:00:00+01:00", "subject": "search: filters"}
+          ]
+        },
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {"ok": true, "count": 2}
+    }
+  ]
+}

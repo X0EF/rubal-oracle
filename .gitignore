@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# ECC dev harness (local Cursor only — not part of rubal-oracle product)
+.cursor/**
+
+# Product agent contract (tracked)
+!.cursor/
+!.cursor/skills/
+!.cursor/skills/oracle-build/
+!.cursor/skills/oracle-build/**

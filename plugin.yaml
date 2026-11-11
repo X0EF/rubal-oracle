@@ -1,0 +1,21 @@
+name: rubal-oracle
+version: 0.1.0
+description: >
+  Forecast whether you will meet commitments you choose, from similar past attempts
+  and git/calendar proof — then inject odds into Hermes and suggest subtract when receptive.
+author: X0EF
+requires_hermes: ">=0.22.7"
+homepage: https://github.com/X0EF/rubal-oracle
+repository: https://github.com/X0EF/rubal-oracle
+provides_tools:
+  - oracle_commit
+  - oracle_settle
+  - oracle_revise
+  - oracle_status
+  - oracle_mirror
+  - oracle_extend
+  - oracle_respond_track
+  - oracle_backfill
+provides_hooks:
+  - pre_llm_call
+  - post_tool_call
