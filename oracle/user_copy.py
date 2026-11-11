@@ -22,6 +22,14 @@ Optional:
   /oracle help    — this card
 """
 
+EMPTY_STORE_STATUS = "Nothing tracked yet.\n\n" + USER_HELP
+
+HELP_INJECT = (
+    "[Oracle — show this card to the user verbatim. Do not replace it with a "
+    "status one-liner. Do not call oracle_status instead of showing this.]\n"
+    + USER_HELP
+)
+
 FIRST_TURN_ONBOARDING = (
     "[Oracle — tell the user in plain words, ~4 sentences] "
     "Oracle helps you stick to goals you pick. Just say them in chat — Hermes captures; "

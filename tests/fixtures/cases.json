@@ -390,6 +390,36 @@
       }
     },
     {
+      "id": "slash-status-empty",
+      "surface": "slash",
+      "raw_args": "status",
+      "expect": {
+        "text_contains": ["Nothing tracked", "Hermes", "Git", "Google Calendar"]
+      }
+    },
+    {
+      "id": "slash-help-prefixed",
+      "surface": "slash",
+      "raw_args": "oracle help",
+      "expect": {
+        "text_contains": ["Hermes tracks", "Git", "Google Calendar"]
+      }
+    },
+    {
+      "id": "inject-slash-help-message",
+      "surface": "pre_llm_call",
+      "input": {
+        "user_message": "/oracle help",
+        "is_first_turn": false,
+        "session_id": "help-msg-1",
+        "platform": "cli"
+      },
+      "expect": {
+        "has_context": true,
+        "context_contains": ["Hermes tracks", "Git", "verbatim"]
+      }
+    },
+    {
       "id": "capture-git-pr-rule",
       "surface": "tool",
       "tool": "oracle_commit",

@@ -10,7 +10,13 @@ from typing import Any
 from oracle.backfill import backfill_from_git, merge_backfill_comparables
 from oracle.git_settle import git_done_rule_satisfied
 from oracle.receptive import is_receptive
-from oracle.user_copy import FIRST_TURN_ONBOARDING, TRACK_OFFER_USER, USER_HELP
+from oracle.user_copy import (
+    EMPTY_STORE_STATUS,
+    FIRST_TURN_ONBOARDING,
+    HELP_INJECT,
+    TRACK_OFFER_USER,
+    USER_HELP,
+)
 
 _TRACK_OFFER_RE = re.compile(
     r"\b(i will|i'll|this week|by (monday|tuesday|wednesday|thursday|friday|saturday|sunday)|ship .+ (by|before))\b",
@@ -415,7 +421,7 @@ def status_text(store: MemoryStore, *, now: str) -> str:
         label = _outcome_label(c["status"])
         lines.append(f"{stmt}: {label}")
     if not lines:
-        return "No commitments."
+        return EMPTY_STORE_STATUS
     return "\n".join(lines)
 
 
@@ -450,10 +456,26 @@ def _first_turn_onboarding(payload: dict[str, Any], store: MemoryStore) -> str |
     return FIRST_TURN_ONBOARDING
 
 
+def _slash_tokens(raw_args: str) -> list[str]:
+    tokens = [t.lstrip("/").lower() for t in raw_args.strip().split() if t]
+    if tokens and tokens[0] == "oracle":
+        tokens = tokens[1:]
+    return tokens
+
+
+def _help_request(message: str) -> bool:
+    text = (message or "").strip().lower()
+    if not text:
+        return False
+    if "/oracle help" in text or text in ("help", "/help", "?", "oracle help"):
+        return True
+    return bool(re.search(r"\bhow (do i|does|to) (use |does )?oracle\b", text))
+
+
 def slash(raw_args: str, *, store: MemoryStore, sources: dict[str, Any], now: str) -> str:
-    parts = raw_args.strip().split()
-    cmd = parts[0].lower() if parts else "status"
-    if cmd in ("help", "?"):
+    parts = _slash_tokens(raw_args)
+    cmd = parts[0] if parts else "status"
+    if cmd in ("help", "?", "h") or "help" in parts:
         return user_help()
     if cmd == "status":
         return status_text(store, now=now)
@@ -545,10 +567,12 @@ def pre_llm_call(
     receptive: bool | None = True,
 ) -> dict[str, Any] | None:
     chunks: list[str] = []
+    user_message = payload.get("user_message") or ""
+    if _help_request(user_message):
+        chunks.append(HELP_INJECT)
     hint = _first_turn_onboarding(payload, store)
     if hint:
         chunks.append(hint)
-    user_message = payload.get("user_message") or ""
     offer = _track_offer_context(user_message, store)
     if offer:
         chunks.append(offer)
