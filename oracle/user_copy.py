@@ -1,22 +1,16 @@
 """User-facing help and onboarding (inject + /oracle help)."""
 
-USER_HELP = """Oracle is a Hermes plugin. You give it a goal and a deadline. Later it looks at git or Google Calendar to see whether you actually did the thing. It does not take your word for it.
+USER_HELP = """rubal-oracle is a Hermes plugin. Name a goal, a deadline, and how we check. Talk in chat; Hermes will save it. No slash command required.
 
-Talk in the chat. You do not have to type a slash command. Say what you will do, when it is due, and how we should check. Hermes will save that (the tool is oracle_commit). If your message already sounds like a plan, Oracle may ask before saving. Nothing is stored until you agree.
+Git (no extra plugin): a repo path plus one done rule — matching commit, merged PR, files touched, or a named test.
 
-How we check depends on the kind of goal.
+Google Calendar: connect Hermes Calendar / Google Workspace Calendar (not email-only). We look for a matching event in your window. That only proves the event exists.
 
-Shipping code, a PR, a commit, or a named test uses git. You do not add another plugin for that. Name a real repo path on this machine, then pick one done rule and keep it:
-- a commit whose subject contains a word you choose (for example "search")
-- a merged pull request whose title or branch matches
-- commits that touch paths you named
-- a named test that passed
+Gym, bank, location, and screen time are refused.
 
-If the goal is "this meeting or block has to exist on my calendar," use Google Calendar. Connect the Hermes Google Calendar plugin (Google Workspace Calendar). Email-only Google login does not count. We look for an event whose title matches, inside the start and end you named. A calendar event only proves the event exists. It does not prove you went to the gym.
+After the deadline: met, not met, or couldn't verify.
 
-We refuse gym, bank, Gmail, location, and screen time. There is no checker for those here.
-
-After the deadline we run the checker. The result is met (proof matched), not met (we could read git or Calendar and the bar was not hit), or couldn't verify (the source was unreadable). Couldn't verify is not the same as failing.
+Rubal is the forecast. Enough similar past attempts → a % with those attempts named, adjusted for this week's calendar. If you are slipping we may suggest a smaller goal. We can also stay quiet.
 
 /oracle status lists what is open. /oracle help prints this again.
 """
@@ -30,18 +24,15 @@ HELP_INJECT = (
 )
 
 FIRST_TURN_ONBOARDING = (
-    "[Oracle — explain this in ordinary sentences, not a slogan. A bit of length is fine.] "
-    "Oracle is this plugin. The user talks in chat about a goal, a deadline, and how we will check. "
-    "Hermes saves it; they do not need a slash command. "
-    "Checking is either git (a repo path plus a done rule: matching commit, merged PR, paths, or a named test) "
-    "or Google Calendar (Hermes Calendar plugin connected, then a matching event in a window). "
-    "We will not take gym, bank, or location goals. After the deadline we say met, not met, or couldn't verify."
+    "[Oracle — a few ordinary sentences.] "
+    "rubal-oracle tracks a goal from chat (deadline + how we check). No slash required. "
+    "Git = repo + done rule. Google Calendar = Hermes Calendar plugin + matching event. "
+    "Rubal = odds from similar past attempts, or we say we do not have enough history. "
+    "Gym and location are refused."
 )
 
 TRACK_OFFER_USER = (
     "That sounds like a plan. Want Oracle to track it? "
-    "If they say yes, Hermes can save it from this chat. "
-    "We still need what they will do, a deadline, and how we check: git (repo plus a done rule) "
-    "or Google Calendar (Calendar plugin plus a matching event). "
-    "Do not save anything until they agree."
+    "Need: what they will do, a deadline, and proof — Git or Google Calendar. "
+    "Nothing is saved until they agree."
 )
