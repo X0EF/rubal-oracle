@@ -25,6 +25,15 @@ echo "== reinstall =="
 hermes plugins remove rubal-oracle || true
 hermes plugins install "file://${ROOT}" --enable --yes-deps
 
+echo "== gateway restart (chat -q uses gateway-loaded tools; install defers them) =="
+hermes gateway restart
+for _ in $(seq 1 15); do
+  if hermes gateway status 2>/dev/null | grep -q "active (running)"; then
+    break
+  fi
+  sleep 2
+done
+
 echo "== doctor (install) =="
 hermes plugins doctor "$INSTALL" --ci
 
