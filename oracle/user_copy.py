@@ -7,7 +7,7 @@ Talk in the chat. You do not have to type a slash command. Say what you will do,
 How we check depends on the kind of goal.
 
 Shipping code, a PR, a commit, or a named test uses git. You do not add another plugin for that. Name a real repo path on this machine, then pick one done rule and keep it:
-- a commit whose subject contains a word you choose (for this hackathon ship, that is often "plugin")
+- a commit whose subject contains a word you choose (for example "search")
 - a merged pull request whose title or branch matches
 - commits that touch paths you named
 - a named test that passed
