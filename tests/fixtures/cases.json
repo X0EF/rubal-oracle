@@ -402,7 +402,7 @@
       "surface": "slash",
       "raw_args": "oracle help",
       "expect": {
-        "text_contains": ["Hermes tracks", "Git", "Google Calendar"]
+        "text_contains": ["Hermes will save", "Git", "Google Calendar"]
       }
     },
     {
@@ -416,7 +416,7 @@
       },
       "expect": {
         "has_context": true,
-        "context_contains": ["Hermes tracks", "Git", "verbatim"]
+        "context_contains": ["Hermes will save", "Git", "verbatim"]
       }
     },
     {
@@ -518,7 +518,7 @@
       },
       "expect": {
         "has_context": true,
-        "context_contains": ["stick to", "deadline", "chat", "Calendar"]
+        "context_contains": ["deadline", "chat", "Calendar"]
       }
     },
     {

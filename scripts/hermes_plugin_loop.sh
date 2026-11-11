@@ -76,8 +76,8 @@ sys.stdout.write(text)
 PY
 )"
 echo "$HELP_OUT"
-echo "$HELP_OUT" | grep -qi "Hermes tracks" || {
-  echo "FAIL: handler help missing 'Hermes tracks'"
+echo "$HELP_OUT" | grep -qi "Hermes will save" || {
+  echo "FAIL: handler help missing 'Hermes will save'"
   exit 1
 }
 
@@ -95,7 +95,7 @@ _chat_shows_howto() {
   fi
   local body
   body="$(printf '%s\n' "$out" | grep -v '^session_id:')"
-  if printf '%s\n' "$body" | grep -qiE 'Hermes tracks|Google Calendar|Nothing tracked|Git \(no extra plugin\)'; then
+  if printf '%s\n' "$body" | grep -qiE 'Hermes will save|Google Calendar|Nothing tracked|oracle_commit'; then
     echo "OK chat: $label"
     return 0
   fi
