@@ -3,7 +3,7 @@ version: 0.1.0
 description: >
   Say a goal in Hermes chat with a deadline. Afterward Oracle checks proof
   (met / not met / couldn't verify): git, Calendar, GitHub, Notion, Linear,
-  Gmail, or kanban.
+  Gmail, kanban, Strava, or Apple Health.
 author: X0EF
 requires_hermes: ">=0.22.7"
 homepage: https://github.com/X0EF/rubal-oracle

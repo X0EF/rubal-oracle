@@ -56,6 +56,7 @@ Oracle only saves a commitment when it knows **how to check**. Git is a **repo p
 | Finish a Linear issue | State done / complete / completed | Hermes **Linear** |
 | Send a specific email | Sent mail, subject match | Hermes **Gmail** |
 | Hermes kanban card done | Card status done | Hermes **kanban** |
+| Workout / gym session | Activity logged by deadline | **Strava** MCP, **Apple Health**, or **athletedata** |
 
 Sample JSON for the non-git sources lives in [`tests/fixtures/sources/`](tests/fixtures/sources/). That is the contract a linked plugin should return (`ok` plus the rows). Full map: [`docs/COMMITMENT_SOURCES.md`](docs/COMMITMENT_SOURCES.md).
 
@@ -63,7 +64,7 @@ Sample JSON for the non-git sources lives in [`tests/fixtures/sources/`](tests/f
 
 ## How a turn works
 
-1. **Capture** — statement, deadline, success criteria, settler (`git`, `calendar`, `github`, `notion`, `linear`, `gmail`, `kanban`).
+1. **Capture** — statement, deadline, success criteria, settler (`git`, `calendar`, `github`, `notion`, `linear`, `gmail`, `kanban`, `strava`, `health`).
 2. **While it’s open** — Hermes replies as usual. Oracle may inject a short note (odds or “not enough history”). It does not block your message.
 3. **Settle** — after the deadline: **met** / **not met** / **couldn’t verify**.
 

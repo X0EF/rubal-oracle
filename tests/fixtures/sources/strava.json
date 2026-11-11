@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "activities": [
+    {"name": "Morning Run", "sport": "run", "start_at": "2026-11-12T07:00:00+01:00", "elapsed_s": 3600},
+    {"name": "Cycling session", "sport": "ride", "start_at": "2026-11-11T08:00:00+01:00", "elapsed_s": 2700}
+  ]
+}

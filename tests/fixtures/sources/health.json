@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "workouts": [
+    {"title": "Morning Workout", "sport": "strength_training", "started_at": "2026-11-12T07:30:00+01:00", "duration_s": 3600},
+    {"title": "Evening Run", "sport": "running", "started_at": "2026-11-11T18:00:00+01:00", "duration_s": 1800}
+  ]
+}

@@ -28,7 +28,7 @@ Tonight we cannot OAuth-test 20 plugins. This table is the support list. Each ro
 | 16 | Consult booked | event created | **booking-bridge** | same as #5 if we see the event |
 | 17 | Agenda item marked done | private outcome=done | **calendar-agenda** | **todo** — still not “went to gym” |
 | 18 | X post went out | tweet exists | not **hermes-x-bookmarks** (bookmarks only) | skip until a post plugin |
-| 19 | Gym / location / bank / screen time | none we can read | — | **refuse** (honest) |
+| 19 | Gym / workout | Strava activity or Apple Health workout logged by deadline | **strava** MCP (`https://mcp.strava.com/mcp`), **apple-health-mcp** / athletedata | **shipped-via-fixture** — `strava.activities` / `health.workouts`; no live OAuth |
 | 20 | “I was focused” / vibes | none | — | **refuse** |
 
 **Hard-hitting, common, keep on the todo (after git+calendar):** GitHub issue closed, Notion task done, Linear done, Gmail sent, kanban done, calendar empty slot. That is six more settlers, not twenty plugins.

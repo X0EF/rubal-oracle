@@ -1065,6 +1065,182 @@
         "commitment.status": "fail"
       },
       "notes": "slot_empty mode; event exists in window → slot not free → fail"
+    },
+
+    {"id": "capture-strava-workout",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Go for a run this week",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Strava activity matching 'run' logged by deadline",
+        "settler": "strava",
+        "match": "run"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "strava": {"ok": true, "activities": [{"name": "Morning Run", "sport": "run", "start_at": "2026-11-12T07:00:00+01:00", "elapsed_s": 3600}]}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "strava",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "capture-strava-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Go for a run this week",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Strava activity matching 'run' logged by deadline",
+        "settler": "strava",
+        "match": "run"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "strava": {"ok": false, "reason": "Strava MCP not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false
+      }
+    },
+
+    {"id": "settle-strava-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-strava-workout"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "strava": {"ok": true, "activities": [{"name": "Morning Run", "sport": "run", "start_at": "2026-11-12T07:00:00+01:00", "elapsed_s": 3600}]}
+      },
+      "expect": {"ok": true, "outcome": "success", "commitment.status": "success"}
+    },
+
+    {"id": "settle-strava-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-strava-workout"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "strava": {"ok": true, "activities": [{"name": "Cycling session", "sport": "ride", "start_at": "2026-11-12T08:00:00+01:00", "elapsed_s": 2700}]}
+      },
+      "expect": {"ok": true, "outcome": "fail", "commitment.status": "fail"}
+    },
+
+    {"id": "settle-strava-unresolved",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-strava-workout"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "strava": {"ok": false}
+      },
+      "expect": {"ok": true, "outcome": "unresolved", "commitment.status": "unresolved"}
+    },
+
+    {"id": "capture-health-workout",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Do a strength workout this week",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Apple Health workout matching 'strength' logged by deadline",
+        "settler": "health",
+        "match": "strength"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "health": {"ok": true, "workouts": [{"title": "Morning Workout", "sport": "strength_training", "started_at": "2026-11-12T07:30:00+01:00", "duration_s": 3600}]}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "health",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "capture-health-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Do a strength workout this week",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Apple Health workout matching 'strength' logged by deadline",
+        "settler": "health",
+        "match": "strength"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "health": {"ok": false, "reason": "Apple Health / athletedata not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false
+      }
+    },
+
+    {"id": "settle-health-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-health-workout"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "health": {"ok": true, "workouts": [{"title": "Morning Workout", "sport": "strength_training", "started_at": "2026-11-12T07:30:00+01:00", "duration_s": 3600}]}
+      },
+      "expect": {"ok": true, "outcome": "success", "commitment.status": "success"}
+    },
+
+    {"id": "settle-health-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-health-workout"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "health": {"ok": true, "workouts": [{"title": "Evening Run", "sport": "running", "started_at": "2026-11-11T18:00:00+01:00", "duration_s": 1800}]}
+      },
+      "expect": {"ok": true, "outcome": "fail", "commitment.status": "fail"}
+    },
+
+    {"id": "settle-health-unresolved",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-health-workout"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "health": {"ok": false}
+      },
+      "expect": {"ok": true, "outcome": "unresolved", "commitment.status": "unresolved"}
     }
   ]
 }

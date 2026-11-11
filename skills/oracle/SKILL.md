@@ -31,8 +31,6 @@ Ask for or infer: statement, deadline (ISO8601), success_criteria, `settler: git
 
 Example: *Ship search this week* → repo, match `search`, deadline Friday 18:00 local as ISO.
 
-Refuses location/bank goals — explain: use git or Calendar proof only.
-
 ## Capture (calendar)
 
 Needs Hermes **Google Calendar** connected. `settler: calendar`, `event_match`, `window_start`, `window_end`, `mode: event_exists` (default) or `mode: slot_empty` (no event in window → success).
@@ -46,8 +44,12 @@ Needs Hermes **Google Calendar** connected. `settler: calendar`, `event_match`, 
 | `linear` | Close a Linear issue (state done/complete/completed) | `sources.linear` — Hermes Linear plugin; `{ok, issues:[{title, state, completed_at}]}` |
 | `gmail` | Send an email with a matching subject | `sources.gmail` — Hermes Gmail plugin; `{ok, sent:[{subject, sent_at}]}` |
 | `kanban` | Complete a Hermes kanban card (status done/complete/completed) | `sources.kanban` — Hermes Kanban plugin; `{ok, tasks:[{title, status}]}` |
+| `strava` | Log a workout / activity by deadline (match on name or sport) | `sources.strava` — Strava MCP (`https://mcp.strava.com/mcp`); `{ok, activities:[{name, sport, start_at, elapsed_s}]}` |
+| `health` | Log a workout by deadline (Apple Health / athletedata; match on title or sport) | `sources.health` — apple-health-mcp / athletedata; `{ok, workouts:[{title, sport, started_at, duration_s}]}` |
 
-All five refuse at `oracle_commit` with `settler_offline` if their source `ok` is false. Settle returns `unresolved` ("couldn't verify") if the source goes offline at settle time.
+All seven refuse at `oracle_commit` with `settler_offline` if their source `ok` is false. Settle returns `unresolved` ("couldn't verify") if the source goes offline at settle time.
+
+When the user mentions gym, workout, or running: offer `strava` or `health` settler if that source is connected. If offline, return `settler_offline` and tell them to connect Strava or Apple Health — do not tell them the goal is impossible.
 
 ## Conversation-first
 

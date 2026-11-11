@@ -149,6 +149,8 @@ _EXTRA_SETTLER_PLUGINS: dict[str, str] = {
     "linear": "Connect Hermes Linear plugin so Oracle can read issues.",
     "gmail": "Connect Hermes Gmail plugin so Oracle can read sent mail.",
     "kanban": "Connect Hermes Kanban plugin so Oracle can read cards.",
+    "strava": "Connect Strava MCP (https://mcp.strava.com/mcp) so Oracle can read activities.",
+    "health": "Connect Apple Health / athletedata MCP so Oracle can read workouts.",
 }
 
 
@@ -411,6 +413,44 @@ def settle(
                 needle,
                 lambda row, _dl: row.get("status", "").lower() in _DONE,
             )
+            outcome = "success" if matched else "fail"
+
+    elif kind == "strava":
+        st = sources.get("strava") or {}
+        if not st.get("ok"):
+            outcome = "unresolved"
+        else:
+            needle = ((c.get("settler") or {}).get("match") or "").lower()
+            deadline = c.get("deadline", "")
+            matched = False
+            for act in st.get("activities") or []:
+                name = (act.get("name") or "").lower()
+                sport = (act.get("sport") or "").lower()
+                if needle and needle not in name and needle not in sport:
+                    continue
+                start = act.get("start_at") or ""
+                if not deadline or (start and start <= deadline):
+                    matched = True
+                    break
+            outcome = "success" if matched else "fail"
+
+    elif kind == "health":
+        hl = sources.get("health") or {}
+        if not hl.get("ok"):
+            outcome = "unresolved"
+        else:
+            needle = ((c.get("settler") or {}).get("match") or "").lower()
+            deadline = c.get("deadline", "")
+            matched = False
+            for wrk in hl.get("workouts") or []:
+                title = (wrk.get("title") or "").lower()
+                sport = (wrk.get("sport") or "").lower()
+                if needle and needle not in title and needle not in sport:
+                    continue
+                start = wrk.get("started_at") or ""
+                if not deadline or (start and start <= deadline):
+                    matched = True
+                    break
             outcome = "success" if matched else "fail"
 
     else:
