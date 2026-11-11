@@ -1,8 +1,8 @@
 name: rubal-oracle
 version: 0.1.0
 description: >
-  Stick to commitments you choose — set a deadline, link git or Calendar proof,
-  then see if you met it (not your word alone).
+  Tell Hermes a goal in chat — it tracks it. Proof is git (repo + done rule) or
+  Google Calendar (Calendar plugin + event). After the deadline: met / not met.
 author: X0EF
 requires_hermes: ">=0.22.7"
 homepage: https://github.com/X0EF/rubal-oracle

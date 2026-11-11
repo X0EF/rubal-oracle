@@ -474,7 +474,7 @@
       },
       "expect": {
         "has_context": true,
-        "context_contains": ["track offer", "Want Oracle"]
+        "context_contains": ["track offer", "Want Oracle", "Git", "Calendar"]
       }
     },
     {
@@ -488,7 +488,7 @@
       },
       "expect": {
         "has_context": true,
-        "context_contains": ["stick to", "deadline"]
+        "context_contains": ["stick to", "deadline", "chat", "Calendar"]
       }
     },
     {
@@ -496,7 +496,14 @@
       "surface": "slash",
       "raw_args": "help",
       "expect": {
-        "text_contains": ["/oracle status", "deadline", "met"]
+        "text_contains": [
+          "/oracle status",
+          "deadline",
+          "met",
+          "Hermes",
+          "Git",
+          "Google Calendar"
+        ]
       }
     },
     {

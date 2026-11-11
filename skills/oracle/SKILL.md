@@ -39,7 +39,12 @@ Needs Hermes **Google Calendar** connected. `settler: calendar`, `event_match`, 
 
 ## Conversation-first
 
-Users should not need `/oracle help`. Explain briefly in chat, then call tools. Inject may show open commitments and odds; never block the user's message.
+Users should not need a slash command. They talk; you call `oracle_commit`. Explain proof in one line:
+
+- **Git** — local repo path; no extra plugin. Done = commit subject match, merged PR, paths, or named test.
+- **Calendar** — Hermes **Google Calendar** plugin (Workspace Calendar). Email-only Google setup is not enough. Done = matching event exists in the window.
+
+Never offer gym, bank, Gmail, or location. Inject may show open commitments and odds; never block the user's message. `/oracle help` is optional if they ask how it works.
 
 ## Outcomes (tell the user plainly)
 

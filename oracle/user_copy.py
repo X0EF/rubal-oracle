@@ -1,29 +1,40 @@
 """User-facing help and onboarding (inject + /oracle help). Plain language only."""
 
-USER_HELP = """Oracle — stick to commitments you choose.
+USER_HELP = """Oracle — Hermes tracks commitments you choose.
 
-1. Make a commitment (what you'll do)
-2. Link proof — git (matching commit) or Google Calendar (event exists)
-3. Set a deadline
+You do not need a slash command. Say in chat what you'll do, by when, and how we'll check. Hermes saves it.
 
-Later we check proof and say met / not met / couldn't verify.
+Proof — pick the matching source:
 
-Commands:
+• Code / ship work → Git (no extra plugin). Name the repo path and what "done" means:
+  matching commit subject, merged PR, files changed, or a named test passing.
+
+• A meeting or calendar block that must exist → Hermes Google Calendar plugin
+  (Google Workspace Calendar; email-only setup does not count). We look for a
+  matching event in the window you name.
+
+Not this version: gym/location, bank, Gmail, screen time.
+
+After the deadline we check that proof: met / not met / couldn't verify.
+
+Optional:
   /oracle status  — what's open
   /oracle help    — this card
-
-Say in chat: "Track: ship X by Friday, checked with git in <repo>."
 """
 
 FIRST_TURN_ONBOARDING = (
-    "[Oracle — tell the user in plain words, ~3 sentences] "
-    "Oracle helps you stick to goals you pick. "
-    "Three steps: say what you'll do, choose proof (git or Calendar), set a deadline. "
-    "We verify from data later — not vibes. Ask what they want to commit to, or use /oracle status."
+    "[Oracle — tell the user in plain words, ~4 sentences] "
+    "Oracle helps you stick to goals you pick. Just say them in chat — Hermes captures; "
+    "no slash command required. "
+    "Proof is either Git (name a repo + how we'll know it's done) or Google Calendar "
+    "(connect the Hermes Calendar plugin, then a matching event). "
+    "Set a deadline. We verify from that data later — not vibes. /oracle help lists proof types."
 )
 
 TRACK_OFFER_USER = (
     "Sounds like a plan. Want Oracle to track it? "
-    "You need: what you'll do, how we check (git or Calendar), and a deadline. "
+    "Hermes can save it from this chat if they agree. "
+    "Need: what you'll do, a deadline, and proof — Git (repo + done rule) or "
+    "Google Calendar (Calendar plugin + matching event). "
     "Nothing is saved until they agree."
 )
