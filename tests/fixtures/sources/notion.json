@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "tasks": [
+    {
+      "title": "Ship landing page",
+      "status": "done",
+      "completed_at": "2026-11-10T17:00:00Z"
+    },
+    {
+      "title": "Write Q4 product brief",
+      "status": "completed",
+      "completed_at": "2026-11-08T11:45:00Z"
+    },
+    {
+      "title": "Review contractor agreements",
+      "status": "complete",
+      "completed_at": "2026-11-07T16:20:00Z"
+    },
+    {
+      "title": "Update API documentation",
+      "status": "in_progress",
+      "completed_at": null
+    }
+  ]
+}

@@ -18,19 +18,20 @@ def _schema(
 
 ORACLE_COMMIT = _schema(
     "oracle_commit",
-    "Track a user goal with a deadline when proof is git (commit/PR/paths/test) or Calendar (event exists). "
+    "Track a user goal with a deadline when proof is git (commit/PR/paths/test), Calendar (event exists/absent), "
+    "GitHub (issue closed), Notion (task done), Linear (issue done), Gmail (email sent), or Kanban (card done). "
     "Call when the user asks to be held accountable or agrees to a track offer. Refuses unsettled goals.",
     {
         "statement": _str("What you plan to do."),
         "deadline": _str("ISO8601 deadline."),
         "success_criteria": _str("Plain-language bar for success."),
-        "settler": {"type": "string", "enum": ["git", "calendar"]},
+        "settler": {"type": "string", "enum": ["git", "calendar", "github", "notion", "linear", "gmail", "kanban"]},
         "repo": _str("Git repo path (git settler)."),
         "match": _str("Substring that must appear in commit subject (git)."),
         "event_match": _str("Substring for calendar event title."),
         "window_start": _str("Calendar window start (ISO8601)."),
         "window_end": _str("Calendar window end (ISO8601)."),
-        "mode": _str("Calendar mode, default event_exists."),
+        "mode": _str("Calendar mode: event_exists (default) or slot_empty / event_absent (no matching event in window → success)."),
         "tag": {
             "type": "string",
             "enum": ["feature", "bugfix", "docs", "meeting"],
@@ -100,7 +101,7 @@ ORACLE_RESPOND_TRACK = _schema(
         "statement": _str("Required on accept."),
         "deadline": _str("Required on accept."),
         "success_criteria": _str("Required on accept."),
-        "settler": {"type": "string", "enum": ["git", "calendar"]},
+        "settler": {"type": "string", "enum": ["git", "calendar", "github", "notion", "linear", "gmail", "kanban"]},
         "repo": _str("Git repo path."),
         "match": _str("Git match / PR pattern / test name."),
         "event_match": _str("Calendar title match."),

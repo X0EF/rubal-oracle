@@ -6,6 +6,8 @@ Git (no extra plugin): a repo path plus one done rule — matching commit, merge
 
 Google Calendar: connect Hermes Calendar / Google Workspace Calendar (not email-only). We look for a matching event in your window. That only proves the event exists.
 
+When that source is connected: GitHub (issue closed), Notion (task done), Linear (issue done), Gmail (email sent), or kanban (card done).
+
 Gym, bank, location, and screen time are refused.
 
 After the deadline: met, not met, or couldn't verify.
@@ -33,6 +35,6 @@ FIRST_TURN_ONBOARDING = (
 
 TRACK_OFFER_USER = (
     "That sounds like a plan. Want Oracle to track it? "
-    "Need: what they will do, a deadline, and proof — Git or Google Calendar. "
+    "Need: what they will do, a deadline, and proof — Git, Google Calendar, GitHub, Notion, Linear, Gmail, or kanban. "
     "Nothing is saved until they agree."
 )

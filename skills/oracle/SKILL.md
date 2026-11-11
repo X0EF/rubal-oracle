@@ -35,7 +35,19 @@ Refuses location/bank goals — explain: use git or Calendar proof only.
 
 ## Capture (calendar)
 
-Needs Hermes **Google Calendar** connected. `settler: calendar`, `event_match`, `window_start`, `window_end`, `mode: event_exists`.
+Needs Hermes **Google Calendar** connected. `settler: calendar`, `event_match`, `window_start`, `window_end`, `mode: event_exists` (default) or `mode: slot_empty` (no event in window → success).
+
+## Extra settlers (fixture-verified; require connected plugin)
+
+| Settler | When to use | Required source |
+|---------|-------------|-----------------|
+| `github` | Close a GitHub issue by deadline | `sources.github` — Hermes `gh` CLI or GitHub plugin; `{ok, issues:[{title, state, closed_at}]}` |
+| `notion` | Finish a Notion task (status done/complete/completed) | `sources.notion` — Notion MCP; `{ok, tasks:[{title, status, completed_at}]}` |
+| `linear` | Close a Linear issue (state done/complete/completed) | `sources.linear` — Hermes Linear plugin; `{ok, issues:[{title, state, completed_at}]}` |
+| `gmail` | Send an email with a matching subject | `sources.gmail` — Hermes Gmail plugin; `{ok, sent:[{subject, sent_at}]}` |
+| `kanban` | Complete a Hermes kanban card (status done/complete/completed) | `sources.kanban` — Hermes Kanban plugin; `{ok, tasks:[{title, status}]}` |
+
+All five refuse at `oracle_commit` with `settler_offline` if their source `ok` is false. Settle returns `unresolved` ("couldn't verify") if the source goes offline at settle time.
 
 ## Conversation-first
 

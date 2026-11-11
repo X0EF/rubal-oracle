@@ -560,6 +560,511 @@
         "calendar": {"ok": true, "events": []}
       },
       "expect": {"ok": true, "count": 2}
+    },
+
+    {"id": "capture-github-issue",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Close oracle-phase-2 GitHub issue",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "GitHub issue titled oracle-phase-2 is closed",
+        "settler": "github",
+        "match": "oracle-phase-2"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "github": {"ok": true, "issues": [{"title": "oracle-phase-2 improvements", "state": "open"}]}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "github",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "capture-github-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Close oracle-phase-2 GitHub issue",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "GitHub issue titled oracle-phase-2 is closed",
+        "settler": "github",
+        "match": "oracle-phase-2"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "github": {"ok": false, "reason": "gh not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false
+      }
+    },
+
+    {"id": "settle-github-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-github-issue"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "github": {"ok": true, "issues": [{"title": "oracle-phase-2 improvements", "state": "closed", "closed_at": "2026-11-12T10:00:00+01:00"}]}
+      },
+      "expect": {"ok": true, "outcome": "success", "commitment.status": "success"}
+    },
+
+    {"id": "settle-github-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-github-issue"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "github": {"ok": true, "issues": [{"title": "oracle-phase-2 improvements", "state": "open"}]}
+      },
+      "expect": {"ok": true, "outcome": "fail", "commitment.status": "fail"}
+    },
+
+    {"id": "settle-github-unresolved",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-github-issue"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "github": {"ok": false}
+      },
+      "expect": {"ok": true, "outcome": "unresolved", "commitment.status": "unresolved"}
+    },
+
+    {"id": "capture-notion-task",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Finish write blog post task in Notion",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Notion task titled 'write blog post' status is done",
+        "settler": "notion",
+        "match": "write blog post"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "notion": {"ok": true, "tasks": [{"title": "write blog post", "status": "in_progress"}]}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "notion",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "capture-notion-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Finish write blog post task in Notion",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Notion task titled 'write blog post' status is done",
+        "settler": "notion",
+        "match": "write blog post"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "notion": {"ok": false, "reason": "Notion MCP not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false
+      }
+    },
+
+    {"id": "settle-notion-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-notion-task"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "notion": {"ok": true, "tasks": [{"title": "write blog post", "status": "done", "completed_at": "2026-11-12T10:00:00+01:00"}]}
+      },
+      "expect": {"ok": true, "outcome": "success", "commitment.status": "success"}
+    },
+
+    {"id": "settle-notion-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-notion-task"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "notion": {"ok": true, "tasks": [{"title": "write blog post", "status": "in_progress"}]}
+      },
+      "expect": {"ok": true, "outcome": "fail", "commitment.status": "fail"}
+    },
+
+    {"id": "settle-notion-unresolved",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-notion-task"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "notion": {"ok": false}
+      },
+      "expect": {"ok": true, "outcome": "unresolved", "commitment.status": "unresolved"}
+    },
+
+    {"id": "capture-linear-issue",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Close auth-flow issue in Linear",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Linear issue titled auth-flow is done",
+        "settler": "linear",
+        "match": "auth-flow"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "linear": {"ok": true, "issues": [{"title": "auth-flow refactor", "state": "in_progress"}]}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "linear",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "capture-linear-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Close auth-flow issue in Linear",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Linear issue titled auth-flow is done",
+        "settler": "linear",
+        "match": "auth-flow"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "linear": {"ok": false, "reason": "Hermes Linear plugin not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false
+      }
+    },
+
+    {"id": "settle-linear-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-linear-issue"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "linear": {"ok": true, "issues": [{"title": "auth-flow refactor", "state": "done", "completed_at": "2026-11-12T10:00:00+01:00"}]}
+      },
+      "expect": {"ok": true, "outcome": "success", "commitment.status": "success"}
+    },
+
+    {"id": "settle-linear-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-linear-issue"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "linear": {"ok": true, "issues": [{"title": "auth-flow refactor", "state": "in_progress"}]}
+      },
+      "expect": {"ok": true, "outcome": "fail", "commitment.status": "fail"}
+    },
+
+    {"id": "settle-linear-unresolved",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-linear-issue"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "linear": {"ok": false}
+      },
+      "expect": {"ok": true, "outcome": "unresolved", "commitment.status": "unresolved"}
+    },
+
+    {"id": "capture-gmail-sent",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Send project proposal email",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Email with subject containing 'project proposal' is sent",
+        "settler": "gmail",
+        "match": "project proposal"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "gmail": {"ok": true, "sent": [{"subject": "Re: last week standup", "sent_at": "2026-11-09T10:00:00+01:00"}]}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "gmail",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "capture-gmail-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Send project proposal email",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Email with subject containing 'project proposal' is sent",
+        "settler": "gmail",
+        "match": "project proposal"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "gmail": {"ok": false, "reason": "Hermes Gmail plugin not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false
+      }
+    },
+
+    {"id": "settle-gmail-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-gmail-sent"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "gmail": {"ok": true, "sent": [{"subject": "project proposal draft ready", "sent_at": "2026-11-12T10:00:00+01:00"}]}
+      },
+      "expect": {"ok": true, "outcome": "success", "commitment.status": "success"}
+    },
+
+    {"id": "settle-gmail-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-gmail-sent"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "gmail": {"ok": true, "sent": [{"subject": "weekly report", "sent_at": "2026-11-12T10:00:00+01:00"}]}
+      },
+      "expect": {"ok": true, "outcome": "fail", "commitment.status": "fail"}
+    },
+
+    {"id": "settle-gmail-unresolved",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-gmail-sent"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "gmail": {"ok": false}
+      },
+      "expect": {"ok": true, "outcome": "unresolved", "commitment.status": "unresolved"}
+    },
+
+    {"id": "capture-kanban-task",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Complete deploy staging kanban card",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Kanban card titled deploy staging is done",
+        "settler": "kanban",
+        "match": "deploy staging"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "kanban": {"ok": true, "tasks": [{"title": "deploy staging env", "status": "in_progress"}]}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "kanban",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "capture-kanban-offline",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Complete deploy staging kanban card",
+        "deadline": "2026-11-14T18:00:00+01:00",
+        "success_criteria": "Kanban card titled deploy staging is done",
+        "settler": "kanban",
+        "match": "deploy staging"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "kanban": {"ok": false, "reason": "Hermes Kanban plugin not connected"}
+      },
+      "expect": {
+        "ok": false,
+        "refused": true,
+        "code": "settler_offline",
+        "saved": false
+      }
+    },
+
+    {"id": "settle-kanban-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-kanban-task"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "kanban": {"ok": true, "tasks": [{"title": "deploy staging env", "status": "done"}]}
+      },
+      "expect": {"ok": true, "outcome": "success", "commitment.status": "success"}
+    },
+
+    {"id": "settle-kanban-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-kanban-task"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "kanban": {"ok": true, "tasks": [{"title": "deploy staging env", "status": "in_progress"}]}
+      },
+      "expect": {"ok": true, "outcome": "fail", "commitment.status": "fail"}
+    },
+
+    {"id": "settle-kanban-unresolved",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-kanban-task"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-15T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": false},
+        "kanban": {"ok": false}
+      },
+      "expect": {"ok": true, "outcome": "unresolved", "commitment.status": "unresolved"}
+    },
+
+    {"id": "capture-calendar-slot-empty",
+      "surface": "tool",
+      "tool": "oracle_commit",
+      "input": {
+        "statement": "Keep Thursday morning free",
+        "deadline": "2026-11-13T12:00:00+01:00",
+        "success_criteria": "No events in Thursday 09:00–12:00 window",
+        "settler": "calendar",
+        "window_start": "2026-11-13T09:00:00+01:00",
+        "window_end": "2026-11-13T12:00:00+01:00",
+        "mode": "slot_empty"
+      },
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "saved": true,
+        "commitment.settler.kind": "calendar",
+        "forecast.uncertainty": "insufficient_reference_class"
+      }
+    },
+
+    {"id": "settle-calendar-slot-empty-success",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-calendar-slot-empty"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-14T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {"ok": true, "events": []}
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "success",
+        "commitment.status": "success"
+      },
+      "notes": "slot_empty mode; no event in window → slot was free → success"
+    },
+
+    {"id": "settle-calendar-slot-empty-fail",
+      "surface": "tool",
+      "tool": "oracle_settle",
+      "setup": ["capture-calendar-slot-empty"],
+      "input": {"id": "$last_id"},
+      "now": "2026-11-14T09:00:00+01:00",
+      "sources": {
+        "git": {"ok": false},
+        "calendar": {
+          "ok": true,
+          "events": [
+            {"summary": "Dentist", "start": "2026-11-13T10:00:00+01:00", "end": "2026-11-13T11:00:00+01:00"}
+          ]
+        }
+      },
+      "expect": {
+        "ok": true,
+        "outcome": "fail",
+        "commitment.status": "fail"
+      },
+      "notes": "slot_empty mode; event exists in window → slot not free → fail"
     }
   ]
 }

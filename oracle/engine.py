@@ -143,6 +143,15 @@ def _refuse(code: str, *, how: str = "") -> dict[str, Any]:
     return out
 
 
+_EXTRA_SETTLER_PLUGINS: dict[str, str] = {
+    "github": "Connect GitHub (gh CLI or Hermes GitHub plugin) so Oracle can read issues.",
+    "notion": "Connect Notion MCP so Oracle can read tasks.",
+    "linear": "Connect Hermes Linear plugin so Oracle can read issues.",
+    "gmail": "Connect Hermes Gmail plugin so Oracle can read sent mail.",
+    "kanban": "Connect Hermes Kanban plugin so Oracle can read cards.",
+}
+
+
 def commit(
     args: dict[str, Any],
     *,
@@ -176,6 +185,11 @@ def commit(
                 "settler_offline",
                 how="Point Oracle at a reachable git repo for this commitment.",
             )
+
+    if settler in _EXTRA_SETTLER_PLUGINS:
+        src = sources.get(settler) or {}
+        if not src.get("ok"):
+            return _refuse("settler_offline", how=_EXTRA_SETTLER_PLUGINS[settler])
 
     cid = store.new_id()
     tag = args.get("tag")
@@ -216,15 +230,40 @@ def _settler_payload(args: dict[str, Any]) -> dict[str, Any]:
             base["paths"] = list(args["paths"])
         if args.get("test_name"):
             base["test_name"] = args["test_name"]
-    if kind == "calendar":
+    elif kind == "calendar":
         base["event_match"] = args.get("event_match")
         base["window_start"] = args.get("window_start")
         base["window_end"] = args.get("window_end")
         base["mode"] = args.get("mode", "event_exists")
+    elif kind in _EXTRA_SETTLER_PLUGINS:
+        base["match"] = args.get("match")
     return base
 
 
+def _record_match(
+    rows: list[dict[str, Any]],
+    title_field: str,
+    needle: str,
+    done_pred: Any,
+    deadline: str = "",
+) -> bool:
+    """Return True if any row title contains needle and satisfies done_pred(row, deadline)."""
+    needle_lower = (needle or "").lower()
+    for row in rows:
+        title = (row.get(title_field) or "").lower()
+        if needle_lower and needle_lower not in title:
+            continue
+        if done_pred(row, deadline):
+            return True
+    return False
+
+
 def _calendar_matches(commitment: dict[str, Any], sources: dict[str, Any]) -> bool:
+    """Return True if an event matching the needle (and window) is found.
+
+    For slot_empty mode with no event_match, falls back to checking whether any
+    event falls inside the window.
+    """
     cal = sources.get("calendar") or {}
     if not cal.get("ok"):
         return False
@@ -232,6 +271,16 @@ def _calendar_matches(commitment: dict[str, Any], sources: dict[str, Any]) -> bo
     needle = (settler.get("event_match") or "").lower()
     win_start = settler.get("window_start")
     win_end = settler.get("window_end")
+    mode = settler.get("mode", "event_exists")
+    if not needle and mode == "slot_empty":
+        # For slot_empty with no needle: any event inside the window counts.
+        for ev in cal.get("events") or []:
+            start = ev.get("start") or ""
+            if start and win_start and win_end:
+                t = _parse_dt(start)
+                if _parse_dt(win_start) <= t <= _parse_dt(win_end):
+                    return True
+        return False
     if not needle:
         return False
     for ev in cal.get("events") or []:
@@ -276,14 +325,94 @@ def settle(
         cal = sources.get("calendar") or {}
         if not cal.get("ok"):
             outcome = "unresolved"
-        elif _calendar_matches(c, sources):
-            outcome = "success"
         else:
             mode = (c.get("settler") or {}).get("mode", "event_exists")
-            if mode == "event_exists":
-                outcome = "fail"
+            found = _calendar_matches(c, sources)
+            if mode == "slot_empty":
+                outcome = "fail" if found else "success"
+            elif mode == "event_exists":
+                outcome = "success" if found else "fail"
             else:
                 outcome = "unresolved"
+
+    elif kind == "github":
+        gh = sources.get("github") or {}
+        if not gh.get("ok"):
+            outcome = "unresolved"
+        else:
+            needle = (c.get("settler") or {}).get("match", "")
+            deadline = c.get("deadline", "")
+            matched = _record_match(
+                gh.get("issues") or [],
+                "title",
+                needle,
+                lambda row, dl: row.get("state") == "closed"
+                and (not dl or (row.get("closed_at") or "") <= dl),
+                deadline,
+            )
+            outcome = "success" if matched else "fail"
+
+    elif kind == "notion":
+        nt = sources.get("notion") or {}
+        if not nt.get("ok"):
+            outcome = "unresolved"
+        else:
+            _DONE = {"done", "complete", "completed"}
+            needle = (c.get("settler") or {}).get("match", "")
+            matched = _record_match(
+                nt.get("tasks") or [],
+                "title",
+                needle,
+                lambda row, _dl: row.get("status", "").lower() in _DONE,
+            )
+            outcome = "success" if matched else "fail"
+
+    elif kind == "linear":
+        lin = sources.get("linear") or {}
+        if not lin.get("ok"):
+            outcome = "unresolved"
+        else:
+            _DONE = {"done", "complete", "completed"}
+            needle = (c.get("settler") or {}).get("match", "")
+            matched = _record_match(
+                lin.get("issues") or [],
+                "title",
+                needle,
+                lambda row, _dl: row.get("state", "").lower() in _DONE,
+            )
+            outcome = "success" if matched else "fail"
+
+    elif kind == "gmail":
+        gm = sources.get("gmail") or {}
+        if not gm.get("ok"):
+            outcome = "unresolved"
+        else:
+            needle = (c.get("settler") or {}).get("match", "")
+            deadline = c.get("deadline", "")
+            matched = _record_match(
+                gm.get("sent") or [],
+                "subject",
+                needle,
+                lambda row, dl: not dl or (row.get("sent_at") or "") <= dl,
+                deadline,
+            )
+            outcome = "success" if matched else "fail"
+
+    elif kind == "kanban":
+        kb = sources.get("kanban") or {}
+        if not kb.get("ok"):
+            outcome = "unresolved"
+        else:
+            _DONE = {"done", "complete", "completed"}
+            needle = (c.get("settler") or {}).get("match", "")
+            matched = _record_match(
+                kb.get("tasks") or [],
+                "title",
+                needle,
+                lambda row, _dl: row.get("status", "").lower() in _DONE,
+            )
+            outcome = "success" if matched else "fail"
+
     else:
         outcome = "unresolved"
 

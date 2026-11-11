@@ -15,16 +15,16 @@ Tonight we cannot OAuth-test 20 plugins. This table is the support list. Each ro
 | 3 | Land files in a folder | paths touched | local git | **shipped** |
 | 4 | Named test green | `test_pass` | local git / CI JSON | **shipped** |
 | 5 | Meeting / demo block exists | event title in a window | **google-workspace** Calendar, **booking-bridge**, **calendar-agenda** | **shipped** if Calendar `ok` |
-| 6 | Keep a focus slot empty | no event in window | same Calendar | **SPEC**; not coded |
-| 7 | Close a GitHub issue | issue state closed by deadline | `gh` / GitHub in Workspace-ish tools, **diaktoros** (PRs) | **todo** — fixture `github.issues` |
-| 8 | Finish a Notion task | status Done + date | Notion MCP (already in some Hermes profiles) | **todo** — fixture `notion.tasks` |
-| 9 | Finish a Linear issue | issue done | **linear-digest** | **todo** — fixture `linear.issues` |
-| 10 | Send a specific email | Gmail sent, subject match | **google-workspace**, **gmail** desktop | **todo** — fixture `gmail.sent` (SPEC had this out; users ask for it) |
+| 6 | Keep a focus slot empty | no event in window | same Calendar | **shipped-via-fixture** — `mode: slot_empty` |
+| 7 | Close a GitHub issue | issue state closed by deadline | `gh` / GitHub in Workspace-ish tools, **diaktoros** (PRs) | **shipped-via-fixture** — `github.issues`; no live OAuth |
+| 8 | Finish a Notion task | status Done + date | Notion MCP (already in some Hermes profiles) | **shipped-via-fixture** — `notion.tasks`; no live OAuth |
+| 9 | Finish a Linear issue | issue done | **linear-digest** | **shipped-via-fixture** — `linear.issues`; no live OAuth |
+| 10 | Send a specific email | Gmail sent, subject match | **google-workspace**, **gmail** desktop | **shipped-via-fixture** — `gmail.sent`; no live OAuth |
 | 11 | File exists / shared in Drive | file id/name | **google-workspace** Drive | skip unless we need a 11th |
 | 12 | Doc updated | Docs revision after t | **google-workspace** Docs | skip (overlaps git) |
 | 13 | Sheet row added | Sheets | **google-workspace** Sheets | skip niche |
 | 14 | Invoice chased / paid | CSV paid flag | **cash-desk** | skip (finance niche) |
-| 15 | Hermes kanban card done | task status | built-in kanban / **kanban-*** plugins | **todo** — fixture `kanban.tasks` |
+| 15 | Hermes kanban card done | task status | built-in kanban / **kanban-*** plugins | **shipped-via-fixture** — `kanban.tasks`; no live OAuth |
 | 16 | Consult booked | event created | **booking-bridge** | same as #5 if we see the event |
 | 17 | Agenda item marked done | private outcome=done | **calendar-agenda** | **todo** — still not “went to gym” |
 | 18 | X post went out | tweet exists | not **hermes-x-bookmarks** (bookmarks only) | skip until a post plugin |

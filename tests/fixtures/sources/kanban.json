@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "tasks": [
+    {
+      "title": "Design new pricing page",
+      "status": "done"
+    },
+    {
+      "title": "Migrate legacy API routes",
+      "status": "in_progress"
+    },
+    {
+      "title": "Write release notes for v2.1",
+      "status": "todo"
+    },
+    {
+      "title": "Audit error logging coverage",
+      "status": "done"
+    }
+  ]
+}

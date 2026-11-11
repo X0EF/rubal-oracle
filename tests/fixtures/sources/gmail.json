@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "sent": [
+    {
+      "subject": "Send invoice follow-up",
+      "sent_at": "2026-11-11T08:45:00Z"
+    },
+    {
+      "subject": "Re: Partnership proposal — next steps",
+      "sent_at": "2026-11-10T15:22:00Z"
+    },
+    {
+      "subject": "Onboarding checklist for new hire",
+      "sent_at": "2026-11-09T11:00:00Z"
+    }
+  ]
+}
