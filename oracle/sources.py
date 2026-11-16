@@ -1,35 +1,19 @@
-"""Build `sources` dicts for oracle.engine from live git / Hermes calendar availability."""
+"""Build `sources` dicts for oracle.engine from live git / cached calendar evidence."""
 
 from __future__ import annotations
 
-import json
-import os
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from oracle.calendar_cache import load_cached_events
 from oracle.calendar_fetch import resolve_calendar_events
 
 
-def _hermes_home() -> Path:
-    return Path(os.environ.get("HERMES_HOME", Path.home() / ".hermes"))
-
-
 def calendar_connected() -> bool:
-    """Heuristic: Google workspace token present (do not read secrets)."""
-    for name in ("google_token.json", "gws_token.json", "google_workspace_token.json"):
-        if (_hermes_home() / name).exists():
-            return True
-    auth = _hermes_home() / "auth.json"
-    if auth.exists():
-        try:
-            data = json.loads(auth.read_text(encoding="utf-8"))
-            if isinstance(data, dict) and data.get("google"):
-                return True
-        except (OSError, json.JSONDecodeError):
-            pass
-    return False
+    """True when we have plugin-cached calendar rows (from post_tool_call), not Hermes auth files."""
+    return bool(load_cached_events(max_age=86400 * 7))
 
 
 def git_log_commits(repo: str, *, limit: int = 50) -> list[dict[str, Any]]:
@@ -121,7 +105,7 @@ def build_sources(
             events = fetched
     calendar: dict[str, Any] = {"ok": cal_ok, "events": events}
     if not cal_ok:
-        calendar["reason"] = "google calendar not connected"
+        calendar["reason"] = "no cached calendar events (ingest via agent calendar list)"
     elif fetch_err and not events:
         calendar["fetch_error"] = fetch_err
 
